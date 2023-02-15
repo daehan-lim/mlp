@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, classification_report
 from util.util import x_y_split
@@ -13,12 +14,36 @@ if __name__ == '__main__':
     X_train, y_train = x_y_split(training_set)
     X_test, y_test = x_y_split(test_set)
 
-    clf = MLPClassifier(random_state=1, max_iter=100, verbose=True)
-    clf.fit(X_train, y_train)
+    params = {'activation': ['relu', 'tanh', 'logistic', 'identity'],
+              'hidden_layer_sizes': [(100,), (50, 100,), (50, 75, 100,),
+                                     (100, 100, 100), (125, 125, 125),
+                                     (50, 50, 50), (50, 100, 50), (100,),
+                                     (10, 30, 10), (20,)
+                                     ],
+              'max_iter': [50, 100, 150],
+              'solver': ['adam', 'sgd', 'lbfgs'],
+              'alpha': [0.0001, 0.05],
+              'learning_rate': ['constant', 'adaptive', 'invscaling']
+              }
+
+    clf = MLPClassifier(random_state=1)
+    clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, verbose=True)
+    clf_grid.fit(X_train, y_train)
+
+    print(f"Best params: {clf_grid.best_params_}")
+    print(f"Best accuracy: {clf_grid.best_score_}")
+    print(f"Best estimator: {clf_grid.best_estimator_}")
+    print('Test accuracy: %.3f' % clf_grid.score(X_test, y_test))
+
+    means = clf_grid.cv_results_['mean_test_score']
+    stds = clf_grid.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
+        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+
     print("\n")
-    print(clf)
-    print(clf.get_params())
-    y_pred = clf.predict(X_test)
+    print(clf_grid)
+    print(clf_grid.get_params())
+    y_pred = clf_grid.predict(X_test)
 
     # print(timeit.timeit(lambda: clf.score(X_test, y_test), number=1))
     # print(timeit.timeit(lambda: accuracy_score(y_test, y_pred), number=1))
