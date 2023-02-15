@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, f1_score
 from util.util import x_y_split
 from tabulate import tabulate
 import timeit
@@ -26,24 +26,26 @@ if __name__ == '__main__':
               'learning_rate': ['constant', 'adaptive', 'invscaling']
               }
 
-    clf = MLPClassifier(random_state=1)
-    clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, verbose=True)
+    clf = MLPClassifier(random_state=1, max_iter=300)
+    clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring='f1', verbose=True, cv=2)
     clf_grid.fit(X_train, y_train)
 
+    print("\n")
+    print(clf_grid)
+    print(clf_grid.get_params())
+
     print(f"Best params: {clf_grid.best_params_}")
-    print(f"Best accuracy: {clf_grid.best_score_}")
     print(f"Best estimator: {clf_grid.best_estimator_}")
-    print('Test accuracy: %.3f' % clf_grid.score(X_test, y_test))
 
     means = clf_grid.cv_results_['mean_test_score']
     stds = clf_grid.cv_results_['std_test_score']
     for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
         print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
-    print("\n")
-    print(clf_grid)
-    print(clf_grid.get_params())
+    print(f"Best f1: {clf_grid.best_score_}")
     y_pred = clf_grid.predict(X_test)
+    print('Test f1 (on testset): %.3f' % f1_score(y_test, y_pred))
+    # print('Test f1 (on testset): %.3f' % clf_grid.score(X_test, y_test)) #takes longer than above
 
     # print(timeit.timeit(lambda: clf.score(X_test, y_test), number=1))
     # print(timeit.timeit(lambda: accuracy_score(y_test, y_pred), number=1))
@@ -67,8 +69,8 @@ if __name__ == '__main__':
     print(tabulate(confusion_matrix, headers='firstrow', tablefmt='fancy_grid'))
     print(classification_report(y_test, y_pred))
     print('\033[1m' + 'Accuracy: ' + '\033[0m' + str(accuracy))
-    print(f"# of iterations: {clf.n_iter_}")
-    print(f"Loss: {round(clf.loss_, 3)}")
-    print(f"# of coefs: {len(clf.coefs_)}")
-    print(f"Name of Output Layer Activation Function: {clf.out_activation_}")
+    # print(f"# of iterations: {clf.n_iter_}")
+    # print(f"Loss: {round(clf.loss_, 3)}")
+    # print(f"# of coefs: {len(clf.coefs_)}")
+    # print(f"Name of Output Layer Activation Function: {clf.out_activation_}")
     print("-----------------------------------------------------------------------------")
