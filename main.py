@@ -15,32 +15,28 @@ if __name__ == '__main__':
     X_test, y_test = x_y_split(test_set)
 
     params = {'activation': ['relu', 'tanh', 'logistic', 'identity'],
-              'hidden_layer_sizes': [(100,), (50, 100,), (50, 75, 100,),
-                                     (100, 100, 100), (125, 125, 125),
-                                     (50, 50, 50), (50, 100, 50), (100,),
-                                     (10, 30, 10), (20,)
-                                     ],
-              'max_iter': [50, 100, 150],
+              'hidden_layer_sizes': [(10, 30, 10)],
+              'max_iter': [50, 200, 300, 400],
               'solver': ['adam', 'sgd', 'lbfgs'],
-              'alpha': [0.0001, 0.05],
+              'alpha': [0.0001, 0.001, 0.01, 0.05],
               'learning_rate': ['constant', 'adaptive', 'invscaling']
               }
 
-    clf = MLPClassifier(random_state=1, max_iter=300)
-    clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring='f1', verbose=True, cv=2)
+    clf = MLPClassifier(random_state=1)
+    clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring='f1', verbose=True, cv=5)
     clf_grid.fit(X_train, y_train)
 
-    print("\n")
+    print("")
     print(clf_grid)
-    print(clf_grid.get_params())
+    print(f"cv={clf_grid.cv}, max_iter = {clf.max_iter}")
 
-    print(f"Best params: {clf_grid.best_params_}")
-    print(f"Best estimator: {clf_grid.best_estimator_}")
+    print(f"\nBest params: {clf_grid.best_params_}")
+    # print(f"Best estimator: {clf_grid.best_estimator_}")
 
-    means = clf_grid.cv_results_['mean_test_score']
-    stds = clf_grid.cv_results_['std_test_score']
-    for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
-        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+    # means = clf_grid.cv_results_['mean_test_score']
+    # stds = clf_grid.cv_results_['std_test_score']
+    # for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
+    #     print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
     print(f"Best f1: {clf_grid.best_score_}")
     y_pred = clf_grid.predict(X_test)
