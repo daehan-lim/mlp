@@ -1,28 +1,29 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, classification_report, f1_score
 from util.util import x_y_split
 from tabulate import tabulate
-import timeit
+from util.util import timeit
 
 
-if __name__ == '__main__':
-    dataset = pd.read_csv("data/dataset.csv")
-    X, y = x_y_split(dataset)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7143,
-                                                        test_size=0.2857, stratify=y, random_state=1)
+@timeit
+def main():
+    training_set = pd.read_csv("data/training_set.csv")
+    test_set = pd.read_csv("data/test_set.csv")
+    X_train, y_train = x_y_split(training_set)
+    X_test, y_test = x_y_split(test_set)
 
-    params = {'activation': ['relu', 'tanh', 'logistic'],
-              'hidden_layer_sizes': [(10, 30, 10)],
-              # 'max_iter': [50, 200, 300, 400],
-              # 'solver': ['adam', 'sgd', 'lbfgs'],
+    params = {#'activation': ['relu', 'tanh', 'logistic'],
+              'hidden_layer_sizes': [(3, 7, 3)],
+              'max_iter': [50, 200, 400],
+              # 'solver': ['adam', 'sgd',],
               # 'alpha': [0.0001, 0.001, 0.01, 0.05],
-              # 'learning_rate': ['constant', 'adaptive', 'invscaling']
+              # 'learning_rate': ['constant', 'adaptive',]
               }
 
-    clf = MLPClassifier(random_state=1, max_iter=200)
+    clf = MLPClassifier(random_state=1)
     clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring='f1', verbose=True, cv=5)
     clf_grid.fit(X_train, y_train)
 
@@ -60,7 +61,7 @@ if __name__ == '__main__':
         ["Actual class = '0'", str(FP) + "\n(FP)", str(TN) + "\n(TN)",
          str(FP + TN) + "\n(Total actual c= '0')"],
         ["Total pred c", str(TP + FP) + "\n(Total pred as '1')", str(FN + TN) + "\n(Total pred as '0')",
-         str(len(X_test))],
+         str(len(test_set))],
     ]
     print(tabulate(confusion_matrix, headers='firstrow', tablefmt='fancy_grid'))
     print(classification_report(y_test, y_pred))
@@ -70,3 +71,7 @@ if __name__ == '__main__':
     # print(f"# of coefs: {len(clf.coefs_)}")
     # print(f"Name of Output Layer Activation Function: {clf.out_activation_}")
     print("-----------------------------------------------------------------------------")
+
+
+if __name__ == '__main__':
+    main()
