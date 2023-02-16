@@ -5,21 +5,22 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, classification_report, f1_score
 from util.util import x_y_split
 from tabulate import tabulate
-import timeit
+from util.util import timeit
 
 
-if __name__ == '__main__':
+@timeit
+def main():
     training_set = pd.read_csv("data/training_set.csv")
     test_set = pd.read_csv("data/test_set.csv")
     X_train, y_train = x_y_split(training_set)
     X_test, y_test = x_y_split(test_set)
 
-    params = {'activation': ['relu', 'tanh', 'logistic', 'identity'],
-              'hidden_layer_sizes': [(10, 30, 10)],
-              'max_iter': [50, 200, 300, 400],
-              'solver': ['adam', 'sgd', 'lbfgs'],
-              'alpha': [0.0001, 0.001, 0.01, 0.05],
-              'learning_rate': ['constant', 'adaptive', 'invscaling']
+    params = {#'activation': ['relu', 'tanh', 'logistic'],
+              'hidden_layer_sizes': [(3, 7, 3)],
+              'max_iter': [50, 200, 400],
+              # 'solver': ['adam', 'sgd',],
+              # 'alpha': [0.0001, 0.001, 0.01, 0.05],
+              # 'learning_rate': ['constant', 'adaptive',]
               }
 
     clf = MLPClassifier(random_state=1)
@@ -70,3 +71,7 @@ if __name__ == '__main__':
     # print(f"# of coefs: {len(clf.coefs_)}")
     # print(f"Name of Output Layer Activation Function: {clf.out_activation_}")
     print("-----------------------------------------------------------------------------")
+
+
+if __name__ == '__main__':
+    main()
