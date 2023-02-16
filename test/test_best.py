@@ -13,7 +13,7 @@ if __name__ == '__main__':
     X_train, y_train = x_y_split(training_set)
     X_test, y_test = x_y_split(test_set)
 
-    clf = MLPClassifier(random_state=1, max_iter=200, verbose=True, hidden_layer_sizes=(10, 30, 10), activation='logistic',
+    clf = MLPClassifier(random_state=1, max_iter=300, verbose=True, hidden_layer_sizes=(3, 7, 3), activation='logistic',
                         )
     clf.fit(X_train, y_train)
     print("\n")
