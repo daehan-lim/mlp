@@ -24,14 +24,14 @@ def main():
 
     params = { # 'activation': ['relu', 'tanh', 'logistic'],
               'hidden_layer_sizes': [(60, 30, 15, 30, 60),
-                                     (120, 60, 30, 60, 120), (200, 100, 50, 100, 200)],
+                                     (60, 30, 15, 30, 60),],
               # 'max_iter': [50, 200, 400],
               # 'solver': ['adam', 'sgd',],
               # 'alpha': [0.0001, 0.001, 0.01],
               # 'learning_rate': ['constant', 'adaptive',]
               }
 
-    clf = MLPClassifier(random_state=1, activation='logistic')
+    clf = MLPClassifier(random_state=1, activation='logistic', alpha=0.01, max_iter=50)
     clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring='f1', verbose=True, cv=5)
     clf_grid.fit(X_train, y_train)
 
@@ -42,10 +42,10 @@ def main():
     print(f"\nBest params: {clf_grid.best_params_}")
     # print(f"Best estimator: {clf_grid.best_estimator_}")
 
-    # means = clf_grid.cv_results_['mean_test_score']
-    # stds = clf_grid.cv_results_['std_test_score']
-    # for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
-    #     print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+    means = clf_grid.cv_results_['mean_test_score']
+    stds = clf_grid.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
+        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
     y_pred = clf_grid.predict(X_test)
     print(f"Best f1: {clf_grid.best_score_}")
