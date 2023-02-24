@@ -16,14 +16,12 @@ def main():
     random.shuffle(indices)
     training_set = dataset.iloc[indices[460:], :].reset_index(drop=True)
     test_set = dataset.iloc[indices[:460], :].reset_index(drop=True)
-
-    # test_set = pd.read_csv("data/test_set.csv")
     X_train, y_train = utilities.x_y_split(training_set, 'class')
     X_test, y_test = utilities.x_y_split(test_set, 'class')
 
     params = { # 'activation': ['relu', 'tanh', 'logistic'],
               'hidden_layer_sizes': [(60, 30, 15, 30, 60),
-                                     (60, 30, 15, 30, 60),],
+                                     (64, 16),],
               # 'max_iter': [50, 200, 400],
               # 'solver': ['adam', 'sgd',],
               # 'alpha': [0.0001, 0.001, 0.01],
