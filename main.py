@@ -4,12 +4,11 @@ import pandas as pd
 from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, classification_report, f1_score, roc_auc_score
-from util.util import x_y_split
 from tabulate import tabulate
-from util.util import timeit
+from daehan_mlutil import utilities
 
 
-@timeit
+@utilities.timeit
 def main():
     dataset = pd.read_csv("data/dataset_binary.csv")
     random.seed(10)
@@ -19,8 +18,8 @@ def main():
     test_set = dataset.iloc[indices[:460], :].reset_index(drop=True)
 
     # test_set = pd.read_csv("data/test_set.csv")
-    X_train, y_train = x_y_split(training_set)
-    X_test, y_test = x_y_split(test_set)
+    X_train, y_train = utilities.x_y_split(training_set, 'class')
+    X_test, y_test = utilities.x_y_split(test_set, 'class')
 
     params = { # 'activation': ['relu', 'tanh', 'logistic'],
               'hidden_layer_sizes': [(60, 30, 15, 30, 60),
