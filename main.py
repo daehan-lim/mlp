@@ -48,7 +48,7 @@ def main():
 
     clf = MLPClassifier(random_state=1, max_iter=50)
     clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring=['f1', 'roc_auc'], verbose=True,
-                            cv=10, refit='roc_auc')
+                            cv=10, refit='f1')
     clf_grid.fit(X, y)
 
     print("")
@@ -62,8 +62,8 @@ def main():
     # for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
     #     print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
-    print(f"Best roc auc: {clf_grid.best_score_}")
-    print(f"F1 on best estimator: {clf_grid.cv_results_['mean_test_f1'][clf_grid.best_index_]}")
+    print(f"Best f1: {clf_grid.best_score_}")
+    print(f"Roc auc on best estimator: {clf_grid.cv_results_['mean_test_roc_auc'][clf_grid.best_index_]}")
 
     '''
     y_pred = clf_grid.predict(X_test)
