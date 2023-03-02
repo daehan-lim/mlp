@@ -31,22 +31,16 @@ def main():
     X_test, y_test = utilities.x_y_split(test_set, 'class')
 
     X, y = utilities.x_y_split(dataset, 'class')
-    params = {'activation': ['relu', 'tanh', 'logistic'],
-              'hidden_layer_sizes': [(76, 32),
-                                     (90, 10),
-                                     (64, 16),
-                                     (50, 30, 10),
-                                     (50, 20, 10),
-                                     (70, 60, 40),
-                                     (50, 30, 20),
+    params = {  # 'activation': ['relu', 'tanh', 'logistic'],
+              'hidden_layer_sizes': [(50, 30, 10),
                                      ],
               # 'max_iter': [50, 200, 400],
               # 'solver': ['adam', 'sgd',],
-              'alpha': [0.0001, 0.001, 0.01],
+              # 'alpha': [0.0001, 0.001, 0.01],
               # 'learning_rate': ['constant', 'adaptive',]
               }
 
-    clf = MLPClassifier(random_state=1, max_iter=50)
+    clf = MLPClassifier(random_state=1, max_iter=50, activation='logistic', alpha=0.0001)
     clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring=['f1', 'roc_auc'], verbose=True,
                             cv=10, refit='f1')
     clf_grid.fit(X, y)
@@ -57,8 +51,8 @@ def main():
 
     print(f"\nBest params: {clf_grid.best_params_}")
 
-    # means = clf_grid.cv_results_['mean_test_score']
-    # stds = clf_grid.cv_results_['std_test_score']
+    # means = clf_grid.cv_results_['mean_test_f1']
+    # stds = clf_grid.cv_results_['std_test_f1']
     # for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
     #     print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
