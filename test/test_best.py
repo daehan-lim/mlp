@@ -1,24 +1,35 @@
 import numpy as np
 import pandas as pd
+from daehan_mlutil import utilities
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, classification_report, f1_score, roc_auc_score
-from util.util import x_y_split
 from tabulate import tabulate
-import timeit
 import random
 
 
 if __name__ == '__main__':
     dataset = pd.read_csv("../data/dataset_binary.csv")
-    random.seed(10)
-    indices = list(range(0, len(dataset)))
-    random.shuffle(indices)
-    training_set = dataset.iloc[indices[460:], :].reset_index(drop=True)
-    test_set = dataset.iloc[indices[:460], :].reset_index(drop=True)
-    X_train, y_train = x_y_split(training_set)
-    X_test, y_test = x_y_split(test_set)
+    # seeds [0, 10, 35, 42, 123, 456, 789, 101112, 131415, 161718]
+    random.seed(161718)
+    transactions_0 = dataset[dataset['class'] == 0]
+    transactions_1 = dataset[dataset['class'] == 1]
 
-    clf = MLPClassifier(random_state=1, verbose=True, hidden_layer_sizes=(3, 7, 3),
+    indices = list(range(0, len(transactions_0)))
+    random.shuffle(indices)
+    test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
+    training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
+
+    indices = list(range(0, len(transactions_1)))
+    random.shuffle(indices)
+    test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
+    training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
+
+    training_set = pd.concat([training_set_0, training_set_1])
+    test_set = pd.concat([test_set_0, test_set_1])
+    X_train, y_train = utilities.x_y_split(training_set, 'class')
+    X_test, y_test = utilities.x_y_split(test_set, 'class')
+
+    clf = MLPClassifier(random_state=1, activation='logistic', alpha=0.0001, max_iter=50, verbose=True, hidden_layer_sizes=(50, 30, 10),
                         )
     clf.fit(X_train, y_train)
     print("\n")
@@ -26,11 +37,12 @@ if __name__ == '__main__':
     print(clf.get_params())
     y_pred = clf.predict(X_test)
 
-    # print(timeit.timeit(lambda: clf.score(X_test, y_test), number=1))
-    # print(timeit.timeit(lambda: accuracy_score(y_test, y_pred), number=1))
-    # score = clf.score(X_test, y_test)  # takes longer: 0.035 vs 0.0004 accuracy
     accuracy = accuracy_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
+    probs = clf.predict_proba(X_test)
+    roc_auc = roc_auc_score(y_test, probs[:, 1])
+    print('f1 (on testset): %.4f' % f1)
+    print('roc auc (on testset): %.4f' % roc_auc)
 
     TP = np.sum(np.logical_and(y_pred == 1, y_test == 1))
     TN = np.sum(np.logical_and(y_pred == 0, y_test == 0))
@@ -48,8 +60,6 @@ if __name__ == '__main__':
     ]
     print(tabulate(confusion_matrix, headers='firstrow', tablefmt='fancy_grid'))
     print(classification_report(y_test, y_pred))
-    print('f1 (on testset): %.3f' % f1)
-    # print('roc auc (on testset): %.3f' % roc_auc_score(y_test, y_pred))
     # print('\033[1m' + 'Accuracy: ' + '\033[0m' + str(accuracy))
     print(f"# of iterations: {clf.n_iter_}")
     print(f"Loss: {round(clf.loss_, 3)}")
