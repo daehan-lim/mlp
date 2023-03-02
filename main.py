@@ -47,7 +47,8 @@ def main():
               }
 
     clf = MLPClassifier(random_state=1, max_iter=50)
-    clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring='f1', verbose=True, cv=10)
+    clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring=['f1', 'roc_auc'], verbose=True,
+                            cv=10, refit='f1')
     clf_grid.fit(X, y)
 
     print("")
@@ -55,22 +56,20 @@ def main():
     print(f"cv={clf_grid.cv}, max_iter = {clf.max_iter}")
 
     print(f"\nBest params: {clf_grid.best_params_}")
-    # print(f"Best estimator: {clf_grid.best_estimator_}")
 
     # means = clf_grid.cv_results_['mean_test_score']
     # stds = clf_grid.cv_results_['std_test_score']
     # for mean, std, params in zip(means, stds, clf_grid.cv_results_['params']):
     #     print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
-    y_pred = clf_grid.predict(X_test)
     print(f"Best f1: {clf_grid.best_score_}")
+    print(f"Roc auc on best estimator: {clf_grid.cv_results_['mean_test_roc_auc'][clf_grid.best_index_]}")
+
+    '''
+    y_pred = clf_grid.predict(X_test)
     print('Test f1 (on testset): %.3f' % f1_score(y_test, y_pred))
     print('roc auc (on testset): %.3f' % roc_auc_score(y_test, y_pred))
-    # print('Test f1 (on testset): %.3f' % clf_grid.score(X_test, y_test)) #takes longer than above
-
-    # print(timeit.timeit(lambda: clf.score(X_test, y_test), number=1))
-    # print(timeit.timeit(lambda: accuracy_score(y_test, y_pred), number=1))
-    # score = clf.score(X_test, y_test)  # takes longer: 0.035 vs 0.0004 accuracy
+    
     accuracy = accuracy_score(y_test, y_pred)
 
     TP = np.sum(np.logical_and(y_pred == 1, y_test == 1))
@@ -94,6 +93,7 @@ def main():
     # print(f"Loss: {round(clf.loss_, 3)}")
     # print(f"# of coefs: {len(clf.coefs_)}")
     # print(f"Name of Output Layer Activation Function: {clf.out_activation_}")
+    '''
     print("-----------------------------------------------------------------------------")
 
 
