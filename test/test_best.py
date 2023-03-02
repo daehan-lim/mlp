@@ -49,7 +49,7 @@ if __name__ == '__main__':
     print(tabulate(confusion_matrix, headers='firstrow', tablefmt='fancy_grid'))
     print(classification_report(y_test, y_pred))
     print('f1 (on testset): %.3f' % f1)
-    print('roc auc (on testset): %.3f' % roc_auc_score(y_test, y_pred))
+    # print('roc auc (on testset): %.3f' % roc_auc_score(y_test, y_pred))
     # print('\033[1m' + 'Accuracy: ' + '\033[0m' + str(accuracy))
     print(f"# of iterations: {clf.n_iter_}")
     print(f"Loss: {round(clf.loss_, 3)}")
