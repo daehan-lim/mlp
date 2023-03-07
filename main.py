@@ -25,12 +25,12 @@ def main():
     test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
     training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
 
-    training_set = pd.concat([training_set_0, training_set_1])
-    test_set = pd.concat([test_set_0, test_set_1])
+    training_set = pd.concat([training_set_0, training_set_1], axis=0)
+    test_set = pd.concat([test_set_0, test_set_1], axis=0)
     X_train, y_train = utilities.x_y_split(training_set, 'class')
     X_test, y_test = utilities.x_y_split(test_set, 'class')
 
-    params = {  'activation': ['relu', 'tanh', 'logistic'],
+    params = {'activation': ['relu', 'tanh', 'logistic'],
               'hidden_layer_sizes': [(64, 16), (128, 64, 16)
                                      ],
               # 'max_iter': [50, 200, 400],
@@ -39,7 +39,7 @@ def main():
               # 'learning_rate': ['constant', 'adaptive',]
               }
 
-    clf = MLPClassifier(random_state=1, max_iter=200, activation='logistic', learning_rate_init=0.01)
+    clf = MLPClassifier(random_state=1, max_iter=200, learning_rate_init=0.01)
     clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring=['f1', 'roc_auc'], verbose=True,
                             cv=10, refit='f1')
     clf_grid.fit(X_train, y_train)
@@ -64,7 +64,7 @@ def main():
     probs = clf_grid.predict_proba(X_test)
     roc_auc = roc_auc_score(y_test, probs[:, 1])
     print('roc auc (on testset): %.3f' % roc_auc)
-    
+
     accuracy = accuracy_score(y_test, y_pred)
 
     TP = np.sum(np.logical_and(y_pred == 1, y_test == 1))
