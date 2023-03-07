@@ -36,7 +36,7 @@ if __name__ == '__main__':
         X_train, y_train = utilities.x_y_split(training_set, 'class')
         X_test, y_test = utilities.x_y_split(test_set, 'class')
 
-        clf = MLPClassifier(random_state=1, activation='relu', max_iter=200, hidden_layer_sizes=(128, 64, 16), )
+        clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='relu', max_iter=200, hidden_layer_sizes=(128, 64, 16), )
         # verbose = True
         clf.fit(X_train, y_train)
         print("\n")
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     print(f"Roc auc (class 1): {auc_sum / 10}")
     print(f"f1: {f1_sum / 10}")
 
-time_sec = time.time() - start_time
-time_min = time_sec / 60
-print("\nProcessing time of %s(): %.2f seconds (%.2f minutes)."
-      % ("whole code", time.time() - start_time, time_min))
+    time_sec = time.time() - start_time
+    time_min = time_sec / 60
+    print("\nProcessing time of %s(): %.2f seconds (%.2f minutes)."
+          % ("whole code", time.time() - start_time, time_min))
