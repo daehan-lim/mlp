@@ -11,7 +11,7 @@ from daehan_mlutil import utilities
 @utilities.timeit
 def main():
     dataset = pd.read_csv("data/dataset_binary.csv")
-    random.seed(10)
+    random.seed(0)
     transactions_0 = dataset[dataset['class'] == 0]
     transactions_1 = dataset[dataset['class'] == 1]
 
