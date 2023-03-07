@@ -30,9 +30,8 @@ def main():
     X_train, y_train = utilities.x_y_split(training_set, 'class')
     X_test, y_test = utilities.x_y_split(test_set, 'class')
 
-    X, y = utilities.x_y_split(dataset, 'class')
-    params = {  # 'activation': ['relu', 'tanh', 'logistic'],
-              'hidden_layer_sizes': [(50, 30, 10),
+    params = {  'activation': ['relu', 'tanh', 'logistic'],
+              'hidden_layer_sizes': [(64, 16), (128, 64, 16)
                                      ],
               # 'max_iter': [50, 200, 400],
               # 'solver': ['adam', 'sgd',],
@@ -40,10 +39,10 @@ def main():
               # 'learning_rate': ['constant', 'adaptive',]
               }
 
-    clf = MLPClassifier(random_state=1, max_iter=50, activation='logistic', alpha=0.0001)
+    clf = MLPClassifier(random_state=1, max_iter=200, activation='logistic', learning_rate_init=0.01)
     clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring=['f1', 'roc_auc'], verbose=True,
                             cv=10, refit='f1')
-    clf_grid.fit(X, y)
+    clf_grid.fit(X_train, y_train)
 
     print("")
     print(clf_grid)
@@ -59,10 +58,12 @@ def main():
     print(f"Best f1: {clf_grid.best_score_}")
     print(f"Roc auc on best estimator: {clf_grid.cv_results_['mean_test_roc_auc'][clf_grid.best_index_]}")
 
-    '''
+
     y_pred = clf_grid.predict(X_test)
     print('Test f1 (on testset): %.3f' % f1_score(y_test, y_pred))
-    print('roc auc (on testset): %.3f' % roc_auc_score(y_test, y_pred))
+    probs = clf_grid.predict_proba(X_test)
+    roc_auc = roc_auc_score(y_test, probs[:, 1])
+    print('roc auc (on testset): %.3f' % roc_auc)
     
     accuracy = accuracy_score(y_test, y_pred)
 
@@ -87,7 +88,7 @@ def main():
     # print(f"Loss: {round(clf.loss_, 3)}")
     # print(f"# of coefs: {len(clf.coefs_)}")
     # print(f"Name of Output Layer Activation Function: {clf.out_activation_}")
-    '''
+
     print("-----------------------------------------------------------------------------")
 
 
