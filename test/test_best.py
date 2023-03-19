@@ -4,17 +4,21 @@ import numpy as np
 import pandas as pd
 from daehan_mlutil import utilities
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score, classification_report, f1_score, roc_auc_score
+from sklearn.metrics import accuracy_score, classification_report, f1_score, roc_auc_score, precision_score, \
+    recall_score
 from tabulate import tabulate
 import random
 
 
 if __name__ == '__main__':
     start_time = time.time()
-    dataset = pd.read_csv("../data/dataset_binary.csv")
+    dataset = pd.read_csv("../data/dataset_binary_458.csv")
     # seeds [0, 10, 35, 42, 123, 456, 789, 101112, 131415, 161718]
     auc_sum = 0
     f1_sum = 0
+    precision_sum = 0
+    recall_sum = 0
+    accuracy_sum = 0
     for seed in range(10):
         print(f"\n\nseed: {seed}")
         random.seed(seed)
@@ -36,7 +40,8 @@ if __name__ == '__main__':
         X_train, y_train = utilities.x_y_split(training_set, 'class')
         X_test, y_test = utilities.x_y_split(test_set, 'class')
 
-        clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='relu', max_iter=200, hidden_layer_sizes=(128, 64, 16), )
+        clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='relu',
+                            max_iter=200, hidden_layer_sizes=(128, 64, 16), )
         # verbose = True
         clf.fit(X_train, y_train)
         print("\n")
@@ -47,6 +52,10 @@ if __name__ == '__main__':
         accuracy = accuracy_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
         f1_sum += f1
+        precision = precision_score(y_test,y_pred)
+        precision_sum += precision
+        recall = recall_score(y_test, y_pred)
+        recall_sum += recall
         probs = clf.predict_proba(X_test)
         roc_auc = roc_auc_score(y_test, probs[:, 1])
         auc_sum += roc_auc
@@ -78,6 +87,8 @@ if __name__ == '__main__':
     print("\n\nAvg")
     print(f"Roc auc (class 1): {auc_sum / 10}")
     print(f"f1: {f1_sum / 10}")
+    print(f"Precision: {precision_sum / 10}")
+    print(f"Recall: {recall_sum / 10}")
 
     time_sec = time.time() - start_time
     time_min = time_sec / 60
