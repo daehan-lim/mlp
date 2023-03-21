@@ -12,6 +12,8 @@ import random
 
 if __name__ == '__main__':
     start_time = time.time()
+    dataset = pd.read_csv("../data/dataset_binary_458.csv")
+    # seeds [0, 10, 35, 42, 123, 456, 789, 101112, 131415, 161718]
     auc_sum = 0
     f1_sum = 0
     precision_sum = 0
@@ -20,80 +22,24 @@ if __name__ == '__main__':
     for seed in range(10):
         print(f"\n\nseed: {seed}")
         random.seed(seed)
-
-        dataset = pd.read_csv("../data/dataset_binary.csv")
         transactions_0 = dataset[dataset['class'] == 0]
         transactions_1 = dataset[dataset['class'] == 1]
 
         indices = list(range(0, len(transactions_0)))
         random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
-        training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
+        test_set_0 = transactions_0.iloc[indices[:417], :]
+        training_set_0 = transactions_0.iloc[indices[417:], :]
 
         indices = list(range(0, len(transactions_1)))
         random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
-        training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
+        test_set_1 = transactions_1.iloc[indices[:43], :]
+        training_set_1 = transactions_1.iloc[indices[43:], :]
 
-        training_set_h1 = pd.concat([training_set_0, training_set_1])
-        test_set_h1 = pd.concat([test_set_0, test_set_1])
-
-        # -------------------------------------------------------------------------------------------
-
-        dataset = pd.read_csv("../data/dataset_binary_264.csv")
-        transactions_0 = dataset[dataset['class'] == 0]
-        transactions_1 = dataset[dataset['class'] == 1]
-
-        indices = list(range(0, len(transactions_0)))
-        random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
-        training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
-
-        indices = list(range(0, len(transactions_1)))
-        random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
-        training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
-
-        training_set_h2 = pd.concat([training_set_0, training_set_1])
-        test_set_h2 = pd.concat([test_set_0, test_set_1])
-
-        # -------------------------------------------------------------------------------------------
-
-        dataset = pd.read_csv("../data/dataset_binary_458.csv")
-        transactions_0 = dataset[dataset['class'] == 0]
-        transactions_1 = dataset[dataset['class'] == 1]
-
-        indices = list(range(0, len(transactions_0)))
-        random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
-        training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
-
-        indices = list(range(0, len(transactions_1)))
-        random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
-        training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
-
-        training_set_h3 = pd.concat([training_set_0, training_set_1])
-        test_set_h3 = pd.concat([test_set_0, test_set_1])
-
-        training_set = pd.concat([training_set_h1, training_set_h2, training_set_h3], ignore_index=True)
-        training_set.fillna(0, inplace=True)
-        class_column = training_set.pop('class')
-        training_set = pd.DataFrame(training_set.astype(int))
-        training_set['class'] = class_column
-
-        # # Testing on all hospitals combined
-        # test_set = pd.concat([test_set_h1, test_set_h2, test_set_h3], ignore_index=True)
-        # test_set.fillna(0, inplace=True)
-        # test_set = pd.DataFrame(test_set.astype(int))
-        # class_column = test_set.pop('class')
-        # test_set['class'] = class_column
-
+        training_set = pd.concat([training_set_0, training_set_1])
+        test_set = pd.concat([test_set_0, test_set_1])
         X_train, y_train = utilities.x_y_split(training_set, 'class')
-        X_test, y_test = utilities.x_y_split(test_set_h3, 'class')
-        # Testing on one hospital at a time
-        X_test_fill = np.zeros((X_test.shape[0], X_train.shape[1] - X_test.shape[1]))
-        X_test = np.concatenate((X_test, X_test_fill), axis=1)
+        X_test, y_test = utilities.x_y_split(test_set, 'class')
+
         clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='logistic',
                             max_iter=400, hidden_layer_sizes=(64, 16), )
         # verbose = True
