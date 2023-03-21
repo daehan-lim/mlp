@@ -12,7 +12,7 @@ import random
 
 if __name__ == '__main__':
     start_time = time.time()
-    dataset = pd.read_csv("../data/dataset_binary_264.csv")
+    dataset = pd.read_csv("../data/dataset_binary_458.csv")
     # seeds [0, 10, 35, 42, 123, 456, 789, 101112, 131415, 161718]
     auc_sum = 0
     f1_sum = 0
@@ -27,13 +27,13 @@ if __name__ == '__main__':
 
         indices = list(range(0, len(transactions_0)))
         random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:475], :]
-        training_set_0 = transactions_0.iloc[indices[475:], :]
+        test_set_0 = transactions_0.iloc[indices[:325], :]
+        training_set_0 = transactions_0.iloc[indices[325:], :]
 
         indices = list(range(0, len(transactions_1)))
         random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:34], :]
-        training_set_1 = transactions_1.iloc[indices[34:], :]
+        test_set_1 = transactions_1.iloc[indices[:32], :]
+        training_set_1 = transactions_1.iloc[indices[32:], :]
 
         training_set = pd.concat([training_set_0, training_set_1])
         test_set = pd.concat([test_set_0, test_set_1])
