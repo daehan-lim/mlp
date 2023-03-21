@@ -58,7 +58,6 @@ def main():
     print(f"Best f1: {clf_grid.best_score_}")
     print(f"Roc auc on best estimator: {clf_grid.cv_results_['mean_test_roc_auc'][clf_grid.best_index_]}")
 
-
     y_pred = clf_grid.predict(X_test)
     print('Test f1 (on testset): %.3f' % f1_score(y_test, y_pred))
     probs = clf_grid.predict_proba(X_test)
