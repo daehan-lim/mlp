@@ -1,5 +1,4 @@
 import time
-
 import numpy as np
 import pandas as pd
 from daehan_mlutil import utilities
@@ -8,7 +7,6 @@ from sklearn.metrics import accuracy_score, classification_report, f1_score, roc
     recall_score
 from tabulate import tabulate
 import random
-
 
 if __name__ == '__main__':
     start_time = time.time()
@@ -27,13 +25,13 @@ if __name__ == '__main__':
 
         indices = list(range(0, len(transactions_0)))
         random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
-        training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
+        test_set_0 = transactions_0.iloc[indices[:417], :]
+        training_set_0 = transactions_0.iloc[indices[417:], :]
 
         indices = list(range(0, len(transactions_1)))
         random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
-        training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
+        test_set_1 = transactions_1.iloc[indices[:43], :]
+        training_set_1 = transactions_1.iloc[indices[43:], :]
 
         training_set_h1 = pd.concat([training_set_0, training_set_1])
         test_set_h1 = pd.concat([test_set_0, test_set_1])
@@ -46,13 +44,13 @@ if __name__ == '__main__':
 
         indices = list(range(0, len(transactions_0)))
         random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
-        training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
+        test_set_0 = transactions_0.iloc[indices[:417], :]
+        training_set_0 = transactions_0.iloc[indices[417:], :]
 
         indices = list(range(0, len(transactions_1)))
         random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
-        training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
+        test_set_1 = transactions_1.iloc[indices[:43], :]
+        training_set_1 = transactions_1.iloc[indices[43:], :]
 
         training_set_h2 = pd.concat([training_set_0, training_set_1])
         test_set_h2 = pd.concat([test_set_0, test_set_1])
@@ -65,18 +63,32 @@ if __name__ == '__main__':
 
         indices = list(range(0, len(transactions_0)))
         random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
-        training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
+        test_set_0 = transactions_0.iloc[indices[:417], :]
+        training_set_0 = transactions_0.iloc[indices[417:], :]
 
         indices = list(range(0, len(transactions_1)))
         random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
-        training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
+        test_set_1 = transactions_1.iloc[indices[:43], :]
+        training_set_1 = transactions_1.iloc[indices[43:], :]
 
         training_set_h3 = pd.concat([training_set_0, training_set_1])
         test_set_h3 = pd.concat([test_set_0, test_set_1])
 
-        training_set = pd.concat([training_set_h1, training_set_h2, training_set_h3], ignore_index=True)
+        # training_set_h1_chunks = split_dataframe(training_set_h1, 1)[:-1]
+        # training_set_h2_chunks = split_dataframe(training_set_h2, 1)[:-1]
+        # training_set_h3_chunks = split_dataframe(training_set_h3, 1)[:-1]
+        # dfs = list()
+        # for i in range(3125):
+        #     dfs.append(training_set_h1_chunks[i])
+        #     dfs.append(training_set_h2_chunks[i])
+        #     dfs.append(training_set_h3_chunks[i])
+        # temp = training_set_h1_chunks[3125:] + training_set_h2_chunks[3125:]
+        # random.shuffle(temp)
+        # dfs.extend(temp)
+        # random.shuffle(dfs)
+        # training_set = pd.concat(dfs).sample(frac=1).reset_index(drop=True)
+
+        training_set = pd.concat([training_set_h1, training_set_h2, training_set_h3]).sample(frac=1).reset_index(drop=True)
         training_set.fillna(0, inplace=True)
         class_column = training_set.pop('class')
         training_set = pd.DataFrame(training_set.astype(int))
