@@ -15,37 +15,97 @@ if __name__ == '__main__':
     precision_sum = 0
     recall_sum = 0
     accuracy_sum = 0
-    dataset1 = pd.read_csv("../data/dataset_binary.csv")
-    dataset2 = pd.read_csv("../data/dataset_binary_264.csv")
-    dataset3 = pd.read_csv("../data/dataset_binary_458.csv")
-    dataset = pd.concat([dataset1, dataset2, dataset3]).sample(frac=1)
-    dataset.fillna(0, inplace=True)
-    class_column = dataset.pop('class')
-    dataset = pd.DataFrame(dataset.astype(int))
-    dataset['class'] = class_column
-
     for seed in range(10):
         print(f"\n\nseed: {seed}")
         random.seed(seed)
 
+        dataset = pd.read_csv("../data/dataset_binary.csv")
         transactions_0 = dataset[dataset['class'] == 0]
         transactions_1 = dataset[dataset['class'] == 1]
 
         indices = list(range(0, len(transactions_0)))
         random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:1219], :]
-        training_set_0 = transactions_0.iloc[indices[1219:], :]
+        test_set_0 = transactions_0.iloc[indices[:417], :]
+        training_set_0 = transactions_0.iloc[indices[417:], :]
 
         indices = list(range(0, len(transactions_1)))
         random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:111], :]
-        training_set_1 = transactions_1.iloc[indices[111:], :]
+        test_set_1 = transactions_1.iloc[indices[:43], :]
+        training_set_1 = transactions_1.iloc[indices[43:], :]
 
-        training_set_ = pd.concat([training_set_0, training_set_1]).sample(frac=1)
-        test_set = pd.concat([test_set_0, test_set_1]).sample(frac=1)
+        training_set_h1 = pd.concat([training_set_0, training_set_1])
+        test_set_h1 = pd.concat([test_set_0, test_set_1])
 
-        X_train, y_train = utilities.x_y_split(training_set_, 'class')
-        X_test, y_test = utilities.x_y_split(test_set, 'class')
+        # -------------------------------------------------------------------------------------------
+
+        dataset = pd.read_csv("../data/dataset_binary_264.csv")
+        transactions_0 = dataset[dataset['class'] == 0]
+        transactions_1 = dataset[dataset['class'] == 1]
+
+        indices = list(range(0, len(transactions_0)))
+        random.shuffle(indices)
+        test_set_0 = transactions_0.iloc[indices[:325], :]
+        training_set_0 = transactions_0.iloc[indices[325:], :]
+
+        indices = list(range(0, len(transactions_1)))
+        random.shuffle(indices)
+        test_set_1 = transactions_1.iloc[indices[:32], :]
+        training_set_1 = transactions_1.iloc[indices[32:], :]
+
+        training_set_h2 = pd.concat([training_set_0, training_set_1])
+        test_set_h2 = pd.concat([test_set_0, test_set_1])
+
+        # -------------------------------------------------------------------------------------------
+
+        dataset = pd.read_csv("../data/dataset_binary_458.csv")
+        transactions_0 = dataset[dataset['class'] == 0]
+        transactions_1 = dataset[dataset['class'] == 1]
+
+        indices = list(range(0, len(transactions_0)))
+        random.shuffle(indices)
+        test_set_0 = transactions_0.iloc[indices[:475], :]
+        training_set_0 = transactions_0.iloc[indices[475:], :]
+
+        indices = list(range(0, len(transactions_1)))
+        random.shuffle(indices)
+        test_set_1 = transactions_1.iloc[indices[:34], :]
+        training_set_1 = transactions_1.iloc[indices[34:], :]
+
+        training_set_h3 = pd.concat([training_set_0, training_set_1])
+        test_set_h3 = pd.concat([test_set_0, test_set_1])
+
+        # training_set_h1_chunks = split_dataframe(training_set_h1, 1)[:-1]
+        # training_set_h2_chunks = split_dataframe(training_set_h2, 1)[:-1]
+        # training_set_h3_chunks = split_dataframe(training_set_h3, 1)[:-1]
+        # dfs = list()
+        # for i in range(3125):
+        #     dfs.append(training_set_h1_chunks[i])
+        #     dfs.append(training_set_h2_chunks[i])
+        #     dfs.append(training_set_h3_chunks[i])
+        # temp = training_set_h1_chunks[3125:] + training_set_h2_chunks[3125:]
+        # random.shuffle(temp)
+        # dfs.extend(temp)
+        # random.shuffle(dfs)
+        # training_set = pd.concat(dfs).sample(frac=1).reset_index(drop=True)
+
+        training_set = pd.concat([training_set_h1, training_set_h2, training_set_h3])  # .sample(frac=1).reset_index(drop=True)
+        training_set.fillna(0, inplace=True)
+        class_column = training_set.pop('class')
+        training_set = pd.DataFrame(training_set.astype(int))
+        training_set['class'] = class_column
+
+        # # Testing on all hospitals combined
+        # test_set = pd.concat([test_set_h1, test_set_h2, test_set_h3], ignore_index=True)
+        # test_set.fillna(0, inplace=True)
+        # test_set = pd.DataFrame(test_set.astype(int))
+        # class_column = test_set.pop('class')
+        # test_set['class'] = class_column
+
+        X_train, y_train = utilities.x_y_split(training_set, 'class')
+        X_test, y_test = utilities.x_y_split(test_set_h3, 'class')
+        # Testing on one hospital at a time
+        X_test_fill = np.zeros((X_test.shape[0], X_train.shape[1] - X_test.shape[1]))
+        X_test = np.concatenate((X_test, X_test_fill), axis=1)
         clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='logistic',
                             max_iter=400, hidden_layer_sizes=(64, 16), )
         # verbose = True
