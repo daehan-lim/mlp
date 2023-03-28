@@ -102,11 +102,11 @@ if __name__ == '__main__':
         # test_set['class'] = class_column
 
         X_train, y_train = utilities.x_y_split(training_set, 'class')
-        _, y_test = utilities.x_y_split(test_set_h3, 'class')
-        X_test3 = test_set_h3.iloc[:, :-1]
+        _, y_test = utilities.x_y_split(test_set_h1, 'class')
         X_test1 = test_set_h1.iloc[:, :-1]
         X_test2 = test_set_h2.iloc[:, :-1]
-        X_test = pd.concat([X_test1, X_test2, X_test3]).iloc[len(test_set_h1) + len(test_set_h2):, :]
+        X_test3 = test_set_h3.iloc[:, :-1]
+        X_test = pd.concat([X_test1, X_test2, X_test3]).iloc[:len(test_set_h1), :]
         X_test.fillna(0, inplace=True)
         X_test = pd.DataFrame(X_test.astype(int))
         X_test = X_test.values
