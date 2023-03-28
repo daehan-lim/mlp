@@ -88,10 +88,10 @@ if __name__ == '__main__':
         # random.shuffle(dfs)
         # training_set = pd.concat(dfs).sample(frac=1).reset_index(drop=True)
 
-        training_set = pd.concat([training_set_h1, training_set_h2, training_set_h3])  # .sample(frac=1).reset_index(drop=True)
+        training_set = pd.concat([training_set_h1, training_set_h2, training_set_h3])  # .sample(frac=1)  # .reset_index(drop=True)
         training_set.fillna(0, inplace=True)
-        class_column = training_set.pop('class')
         training_set = pd.DataFrame(training_set.astype(int))
+        class_column = training_set.pop('class')
         training_set['class'] = class_column
 
         # # Testing on all hospitals combined
@@ -102,10 +102,17 @@ if __name__ == '__main__':
         # test_set['class'] = class_column
 
         X_train, y_train = utilities.x_y_split(training_set, 'class')
-        X_test, y_test = utilities.x_y_split(test_set_h3, 'class')
+        _, y_test = utilities.x_y_split(test_set_h3, 'class')
+        X_test3 = test_set_h3.iloc[:, :-1]
+        X_test1 = test_set_h1.iloc[:, :-1]
+        X_test2 = test_set_h2.iloc[:, :-1]
+        X_test = pd.concat([X_test1, X_test2, X_test3]).iloc[len(test_set_h1) + len(test_set_h2):, :]
+        X_test.fillna(0, inplace=True)
+        X_test = pd.DataFrame(X_test.astype(int))
+        X_test = X_test.values
         # Testing on one hospital at a time
-        X_test_fill = np.zeros((X_test.shape[0], X_train.shape[1] - X_test.shape[1]))
-        X_test = np.concatenate((X_test, X_test_fill), axis=1)
+        # X_test_fill = np.zeros((X_test.shape[0], X_train.shape[1] - X_test.shape[1]))
+        # X_test = np.concatenate((X_test, X_test_fill), axis=1)
         clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='logistic',
                             max_iter=400, hidden_layer_sizes=(64, 16), )
         # verbose = True
