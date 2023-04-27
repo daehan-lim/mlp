@@ -10,36 +10,20 @@ from daehan_mlutil import utilities
 
 @utilities.timeit
 def main():
-    dataset = pd.read_csv("data/dataset_binary_458.csv")
-    random.seed(0)
-    transactions_0 = dataset[dataset['class'] == 0]
-    transactions_1 = dataset[dataset['class'] == 1]
-
-    indices = list(range(0, len(transactions_0)))
-    random.shuffle(indices)
-    test_set_0 = transactions_0.iloc[indices[:417], :].reset_index(drop=True)
-    training_set_0 = transactions_0.iloc[indices[417:], :].reset_index(drop=True)
-
-    indices = list(range(0, len(transactions_1)))
-    random.shuffle(indices)
-    test_set_1 = transactions_1.iloc[indices[:43], :].reset_index(drop=True)
-    training_set_1 = transactions_1.iloc[indices[43:], :].reset_index(drop=True)
-
-    training_set = pd.concat([training_set_0, training_set_1], axis=0)
-    test_set = pd.concat([test_set_0, test_set_1], axis=0)
+    training_set = pd.read_csv("data/training_set_binary.csv")
+    test_set = pd.read_csv("data/test_set_binary.csv")
     X_train, y_train = utilities.x_y_split(training_set, 'class')
     X_test, y_test = utilities.x_y_split(test_set, 'class')
 
     params = {'activation': ['relu', 'tanh', 'logistic'],
-              'hidden_layer_sizes': [(64, 16), (128, 64, 16)
-                                     ],
+              'hidden_layer_sizes': [(64, 16), (128, 64, 16)],
               # 'max_iter': [50, 200, 400],
               # 'solver': ['adam', 'sgd',],
               # 'alpha': [0.0001, 0.001, 0.01],
               # 'learning_rate': ['constant', 'adaptive',]
               }
 
-    clf = MLPClassifier(random_state=1, max_iter=200, learning_rate_init=0.01)
+    clf = MLPClassifier(random_state=1, max_iter=400, learning_rate_init=0.01)
     clf_grid = GridSearchCV(clf, param_grid=params, n_jobs=-1, scoring=['f1', 'roc_auc'], verbose=True,
                             cv=10, refit='f1')
     clf_grid.fit(X_train, y_train)

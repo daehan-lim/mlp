@@ -12,7 +12,9 @@ import random
 
 if __name__ == '__main__':
     start_time = time.time()
-    dataset = pd.read_csv("../data/dataset_binary_458.csv")
+    training_set = pd.read_csv("../data/training_set_binary.csv")
+    test_set = pd.read_csv("../data/test_set_binary.csv")
+    # dataset = pd.read_csv("../data/dataset_binary_all.csv")
     # seeds [0, 10, 35, 42, 123, 456, 789, 101112, 131415, 161718]
     auc_sum = 0
     f1_sum = 0
@@ -22,21 +24,6 @@ if __name__ == '__main__':
     for seed in range(10):
         print(f"\n\nseed: {seed}")
         random.seed(seed)
-        transactions_0 = dataset[dataset['class'] == 0]
-        transactions_1 = dataset[dataset['class'] == 1]
-
-        indices = list(range(0, len(transactions_0)))
-        random.shuffle(indices)
-        test_set_0 = transactions_0.iloc[indices[:325], :]
-        training_set_0 = transactions_0.iloc[indices[325:], :]
-
-        indices = list(range(0, len(transactions_1)))
-        random.shuffle(indices)
-        test_set_1 = transactions_1.iloc[indices[:32], :]
-        training_set_1 = transactions_1.iloc[indices[32:], :]
-
-        training_set = pd.concat([training_set_0, training_set_1])
-        test_set = pd.concat([test_set_0, test_set_1])
         X_train, y_train = utilities.x_y_split(training_set, 'class')
         X_test, y_test = utilities.x_y_split(test_set, 'class')
 
@@ -83,6 +70,8 @@ if __name__ == '__main__':
         print(f"Loss: {round(clf.loss_, 3)}")
         print(f"# of coefs: {len(clf.coefs_)}")
         print(f"Name of Output Layer Activation Function: {clf.out_activation_}")
+
+        break
 
     print("\n\nAvg")
     print(f"Roc auc (class 1): {auc_sum / 10}")
