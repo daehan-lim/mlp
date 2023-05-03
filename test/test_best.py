@@ -43,7 +43,7 @@ if __name__ == '__main__':
         X_test, y_test = utilities.x_y_split(test_set, 'class')
 
         clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='logistic',
-                            max_iter=400, hidden_layer_sizes=(256, 128), )
+                            max_iter=400, hidden_layer_sizes=(128, 64, 32), )
         # verbose = True
         clf.fit(X_train, y_train)
         print("\n")
