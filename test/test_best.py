@@ -24,11 +24,26 @@ if __name__ == '__main__':
     for seed in range(10):
         print(f"\n\nseed: {seed}")
         random.seed(seed)
+        # transactions_0 = dataset[dataset['class'] == 0]
+        # transactions_1 = dataset[dataset['class'] == 1]
+        #
+        # indices = list(range(0, len(transactions_0)))
+        # random.shuffle(indices)
+        # test_set_0 = transactions_0.iloc[indices[:2653], :].reset_index(drop=True)
+        # training_set_0 = transactions_0.iloc[indices[2653:], :].reset_index(drop=True)
+        #
+        # indices = list(range(0, len(transactions_1)))
+        # random.shuffle(indices)
+        # test_set_1 = transactions_1.iloc[indices[:145], :].reset_index(drop=True)
+        # training_set_1 = transactions_1.iloc[indices[145:], :].reset_index(drop=True)
+        #
+        # training_set = pd.concat([training_set_0, training_set_1], axis=0)
+        # test_set = pd.concat([test_set_0, test_set_1], axis=0)
         X_train, y_train = utilities.x_y_split(training_set, 'class')
         X_test, y_test = utilities.x_y_split(test_set, 'class')
 
         clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='logistic',
-                            max_iter=400, hidden_layer_sizes=(64, 16), )
+                            max_iter=400, hidden_layer_sizes=(128, 64), )
         # verbose = True
         clf.fit(X_train, y_train)
         print("\n")
