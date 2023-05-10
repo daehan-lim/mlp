@@ -12,8 +12,8 @@ import random
 
 if __name__ == '__main__':
     start_time = time.time()
-    training_set = pd.read_csv("../data/training_set_binary_dif_norm_full.csv")
-    test_set = pd.read_csv("../data/test_set_binary_dif_norm_full.csv")
+    training_set = pd.read_csv("../data/training_set_binary_stand.csv")
+    test_set = pd.read_csv("../data/test_set_binary_stand.csv")
     # dataset = pd.read_csv("../data/dataset_binary_all.csv")
     # seeds [0, 10, 35, 42, 123, 456, 789, 101112, 131415, 161718]
     auc_sum = 0
