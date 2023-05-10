@@ -12,8 +12,8 @@ import random
 
 if __name__ == '__main__':
     start_time = time.time()
-    training_set = pd.read_csv("../data/training_set_binary_dif_stand.csv")
-    test_set = pd.read_csv("../data/test_set_binary_dif_stand.csv")
+    training_set = pd.read_csv("../data/training_set_binary_dif_norm_full.csv")
+    test_set = pd.read_csv("../data/test_set_binary_dif_norm_full.csv")
     # dataset = pd.read_csv("../data/dataset_binary_all.csv")
     # seeds [0, 10, 35, 42, 123, 456, 789, 101112, 131415, 161718]
     auc_sum = 0
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         X_test, y_test = utilities.x_y_split(test_set, 'class')
 
         clf = MLPClassifier(learning_rate_init=0.01, random_state=1, activation='logistic',
-                            max_iter=400, hidden_layer_sizes=(128, 64, 32), )
+                            max_iter=400, hidden_layer_sizes=(256, 128, 64), )
         # verbose = True
         clf.fit(X_train, y_train)
         print("\n")
