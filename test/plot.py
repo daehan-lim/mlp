@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# Load your datasets
+
 train_original = pd.read_csv("../data/training_set_binary.csv")
 test_original = pd.read_csv("../data/test_set_binary.csv")
 train_norm = pd.read_csv("../data/training_set_binary_norm.csv")
@@ -13,16 +13,23 @@ test_stand = pd.read_csv("../data/test_set_binary_stand.csv")
 train_norm_full = pd.read_csv("../data/training_set_binary_norm_full.csv")
 test_norm_full = pd.read_csv("../data/test_set_binary_norm_full.csv")
 
-# Concatenate the train and test datasets
-dataset_original = pd.concat([train_original, test_original])
-dataset_norm = pd.concat([train_norm, test_norm])
-dataset_stand = pd.concat([train_stand, test_stand])
-dataset_norm_full = pd.concat([train_norm_full, test_norm_full])
+'''
+# Test diff
+train_original = pd.read_csv("../data/training_set_binary_dif.csv")
+test_original = pd.read_csv("../data/test_set_binary_dif.csv")
+train_norm = pd.read_csv("../data/training_set_binary_dif_norm.csv")
+test_norm = pd.read_csv("../data/test_set_binary_dif_norm.csv")
+train_stand = pd.read_csv("../data/training_set_binary_dif_stand.csv")
+test_stand = pd.read_csv("../data/test_set_binary_dif_stand.csv")
+train_norm_full = pd.read_csv("../data/training_set_binary_dif_norm_full.csv")
+test_norm_full = pd.read_csv("../data/test_set_binary_dif_norm_full.csv")
+'''
 
-dataset_original = dataset_original.drop("class", axis=1)
-dataset_norm = dataset_norm.drop("class", axis=1)
-dataset_stand = dataset_stand.drop("class", axis=1)
-dataset_norm_full = dataset_norm_full.drop("class", axis=1)
+# Concatenate the train and test datasets
+dataset_original = pd.concat([train_original, test_original]).drop("class", axis=1)
+dataset_norm = pd.concat([train_norm, test_norm]).drop("class", axis=1)
+dataset_stand = pd.concat([train_stand, test_stand]).drop("class", axis=1)
+dataset_norm_full = pd.concat([train_norm_full, test_norm_full]).drop("class", axis=1)
 
 
 def show_info(dataset, str):
